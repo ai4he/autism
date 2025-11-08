@@ -47,7 +47,7 @@ A comprehensive Applied Behavior Analysis (ABA) behavior tracking and management
   - Crisis protocol generation
   - ABA methodology-based insights
 
-- **Multimodal Real-time Input (NEW!)**
+- **Multimodal Real-time Input**
   - **Voice Conversation Mode**: Natural voice-based behavior entry through AI-guided conversation
   - **Video Streaming Analysis**: Real-time video processing with automatic behavior detection
   - **Interruptible Conversations**: Natural dialog flow with ability to interrupt AI responses
@@ -55,6 +55,21 @@ A comprehensive Applied Behavior Analysis (ABA) behavior tracking and management
   - **Emotion & Movement Detection**: Video analysis identifies facial expressions, emotions, and behavioral intensity
   - **Bilingual Voice Support**: Full conversational support in English and Spanish
   - **Privacy-First Design**: API keys per session, no permanent storage
+
+- **PDF Report Import (NEW!)**
+  - Import daily ABA provider reports (PDF format)
+  - AI-powered extraction of behavior data from PDFs
+  - Review and validate extracted data before import
+  - Bulk import multiple PDF files at once
+  - Automatic ABC data mapping
+
+- **Contextual AI Chat Assistant (NEW!)**
+  - Personalized AI assistant that knows your child's specific behavior patterns
+  - Ask questions about behavior trends and patterns
+  - Get child-specific intervention recommendations
+  - Parent-friendly language and empathetic responses
+  - Bilingual support (English/Spanish)
+  - Suggested questions to get started
 
 ### Technical Features
 - **Progressive Web App (PWA)**
@@ -107,6 +122,30 @@ npm run build
 npm start
 ```
 
+### Production Deployment
+
+For detailed deployment instructions including nginx reverse proxy and SSL certificate setup, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+
+**Quick deployment to production server:**
+
+1. Copy application files to server at `/var/www/autism`
+2. Run the automated deployment script:
+   ```bash
+   cd /var/www/autism
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+
+The script will:
+- Install all required dependencies (Node.js, nginx, Certbot, PM2)
+- Build the application
+- Configure nginx reverse proxy for `autism.haielab.org`
+- Obtain and configure Let's Encrypt SSL certificate
+- Start the application with PM2 process manager
+- Set up automatic startup on server reboot
+
+For manual deployment or advanced configuration, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+
 ## 📱 Progressive Web App Installation
 
 ### Mobile (iOS/Android)
@@ -126,12 +165,52 @@ npm start
 The app supports AI-powered analysis using Google Gemini:
 
 1. Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Enter the API key in any of the AI analysis sections:
-   - Behavior form → AI Analysis
+2. Enter the API key in any of the AI features:
+   - Dashboard → AI Assistant (Contextual Chat)
+   - Behavior form → Voice Conversation or Video Analysis
+   - Behaviors list → Import PDF
    - Crisis protocols → AI Generator
    - Analytics page → AI-Powered Analysis
 
-**Note:** The API key is stored in-memory only and never persisted. You'll need to enter it each session.
+**Note:** The API key is stored in-memory only and never persisted. You'll need to enter it each session for privacy.
+
+## 🤖 Using AI Features
+
+### Contextual AI Chat Assistant
+1. Navigate to **Dashboard**
+2. Click on **"AI Assistant"** button
+3. Enter your Gemini API key when prompted
+4. Start asking questions about your child's behaviors:
+   - "What patterns have you noticed?"
+   - "What intervention strategies do you recommend?"
+   - "Has there been progress recently?"
+   - "What triggers the most behaviors?"
+5. All responses are personalized based on your child's specific data
+6. Clear chat history with the trash icon if needed
+
+**Tips:**
+- The assistant has analyzed all your child's behavior records
+- Ask specific questions about patterns, trends, or strategies
+- Use suggested questions to get started
+- All advice is based on ABA methodology and your child's data
+
+### PDF Report Import
+1. Navigate to **Behaviors** page
+2. Click **"Import PDF"** button
+3. Enter your Gemini API key when prompted
+4. Drag and drop PDF files or click to select
+5. Click **"Process PDFs"** to extract behavior data
+6. Review the extracted behaviors:
+   - Check/uncheck items to select which to import
+   - Verify accuracy of extracted data
+   - View raw extracted text if needed
+7. Click **"Import Selected Behaviors"** to add to your database
+
+**Tips:**
+- Works with standard ABA provider daily reports
+- Can process multiple PDF files at once
+- Review data carefully before importing
+- Invalid or incomplete data will be flagged
 
 ## 🎙️ Using Multimodal Input Features
 
@@ -233,16 +312,27 @@ Based on the four main functions of behavior:
 │   ├── crisis.tsx     # Crisis protocols
 │   └── analytics.tsx  # Analytics and charts
 ├── components/        # React components
-│   └── Layout.tsx     # Main layout wrapper
+│   ├── Layout.tsx     # Main layout wrapper
+│   ├── Onboarding.tsx # Parent education tutorial
+│   ├── MultimodalConversation.tsx # Voice + video UI
+│   ├── VoiceConversation.tsx # Voice-only UI
+│   ├── ContextualChat.tsx # AI chat assistant UI
+│   └── PDFImport.tsx  # PDF import UI
 ├── lib/               # Utilities and business logic
 │   ├── db.ts         # IndexedDB wrapper
 │   ├── gemini.ts     # Google Gemini integration
-│   └── analytics.ts  # Analytics calculations
+│   ├── analytics.ts  # Analytics calculations
+│   ├── multimodal-conversation.ts # Voice + video conversation
+│   ├── voice-conversation.ts # Voice-only conversation
+│   ├── contextual-chat.ts # AI chat assistant
+│   └── pdf-import.ts # PDF import and extraction
 ├── types/            # TypeScript type definitions
 ├── styles/           # Global styles
 ├── public/           # Static assets
 │   ├── locales/      # Translation files
 │   └── manifest.json # PWA manifest
+├── DEPLOYMENT.md     # Detailed deployment guide
+├── deploy.sh         # Automated deployment script
 └── data/             # Data storage (gitignored)
 ```
 
