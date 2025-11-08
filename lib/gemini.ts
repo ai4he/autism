@@ -9,39 +9,48 @@ export function initializeGemini(apiKey: string) {
 }
 
 export async function analyzeBehaviorPatterns(
-  behaviors: BehaviorEntry[]
+  behaviors: BehaviorEntry[],
+  language: 'en' | 'es' = 'en'
 ): Promise<AIAnalysis> {
   if (!genAI) {
     throw new Error('Gemini AI not initialized. Please set API key in settings.');
   }
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-  const prompt = `You are an expert in Applied Behavior Analysis (ABA) methodology. Analyze the following behavior data and provide insights.
+  const languageInstruction = language === 'es'
+    ? 'Proporciona todas las respuestas en español, usando lenguaje claro y comprensible para padres.'
+    : 'Provide all responses in English, using clear and understandable language for parents.';
 
-Behavior Data:
-${JSON.stringify(behaviors, null, 2)}
+  const prompt = `You are an expert in Applied Behavior Analysis (ABA) methodology helping parents understand their child's behavior patterns. ${languageInstruction}
 
-Based on ABA gold standards, provide:
-1. Pattern analysis: Identify recurring patterns in antecedents, behaviors, and consequences
-2. Function analysis: Determine the most likely behavioral functions
-3. Predictions: Predict potential future behaviors based on patterns
-4. Recommendations: Provide evidence-based intervention strategies
-5. Risk assessment: Evaluate current risk level
+IMPORTANT: Interpret all information in the context of THIS SPECIFIC CHILD. All recommendations should be personalized based on their unique behavior patterns, not generic advice.
+
+Child's Behavior Data (${behaviors.length} total entries):
+${JSON.stringify(behaviors.slice(0, 50), null, 2)}
+
+Based on ABA gold standards and THIS CHILD'S specific data, provide:
+1. Pattern analysis: Identify recurring patterns specific to this child's antecedents, behaviors, and consequences
+2. Function analysis: Determine the most likely behavioral functions for THIS child
+3. Predictions: Predict potential future behaviors based on THIS child's patterns
+4. Recommendations: Provide evidence-based intervention strategies tailored to THIS child's specific needs and patterns
+5. Risk assessment: Evaluate current risk level based on THIS child's severity trends
+
+Use empathetic, parent-friendly language. Focus on actionable insights specific to this child's data.
 
 Format your response as a JSON object with the following structure:
 {
-  "predictions": ["prediction 1", "prediction 2"],
+  "predictions": ["prediction 1 (child-specific)", "prediction 2"],
   "recommendations": [
     {
       "type": "prevention|intervention|strategy",
       "priority": "high|medium|low",
-      "recommendation": "specific recommendation",
-      "rationale": "ABA-based rationale",
+      "recommendation": "specific recommendation for this child",
+      "rationale": "ABA-based rationale tied to this child's patterns",
       "confidence": 0.0-1.0
     }
   ],
-  "patterns": ["pattern 1", "pattern 2"],
+  "patterns": ["pattern 1 specific to this child", "pattern 2"],
   "riskLevel": "low|medium|high"
 }`;
 
@@ -68,29 +77,38 @@ Format your response as a JSON object with the following structure:
 
 export async function generateInterventionStrategies(
   behavior: BehaviorEntry,
-  context: string
+  context: string,
+  language: 'en' | 'es' = 'en'
 ): Promise<string[]> {
   if (!genAI) {
     throw new Error('Gemini AI not initialized');
   }
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-  const prompt = `As an ABA expert, suggest intervention strategies for this behavior:
+  const languageInstruction = language === 'es'
+    ? 'Proporciona todas las estrategias en español, usando lenguaje claro y práctico para padres.'
+    : 'Provide all strategies in English, using clear and practical language for parents.';
 
+  const prompt = `As an ABA expert helping a parent, suggest intervention strategies specifically tailored to their child. ${languageInstruction}
+
+Specific Behavior Instance:
 Antecedent: ${behavior.antecedent}
 Behavior: ${behavior.behavior}
 Consequence: ${behavior.consequence}
 Function: ${behavior.function}
 Severity: ${behavior.severity}
+${behavior.notes ? `Additional Notes: ${behavior.notes}` : ''}
 
-Additional Context: ${context}
+Child's Behavioral Context: ${context}
 
-Provide 3-5 specific, evidence-based intervention strategies following ABA methodology. Focus on:
-- Antecedent modifications
-- Teaching replacement behaviors
-- Consequence modifications
-- Environmental adjustments
+Based on THIS CHILD'S specific patterns and needs, provide 3-5 personalized, evidence-based intervention strategies following ABA methodology. Focus on:
+- Antecedent modifications specific to this child's triggers
+- Teaching replacement behaviors appropriate for this child's skill level
+- Consequence modifications that fit this child's reinforcement profile
+- Environmental adjustments based on this child's patterns
+
+Use empathetic, actionable language that parents can implement at home.
 
 Return only a JSON array of strings: ["strategy 1", "strategy 2", ...]`;
 

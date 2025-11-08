@@ -2,6 +2,7 @@ import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import Layout from '@/components/Layout';
 import Onboarding from '@/components/Onboarding';
 import { db, STORES } from '@/lib/db';
@@ -15,8 +16,11 @@ import {
   Gift,
   Calendar,
   HelpCircle,
+  MessageCircle,
 } from 'lucide-react';
 import Link from 'next/link';
+
+const ContextualChat = dynamic(() => import('@/components/ContextualChat'), { ssr: false });
 
 const ONBOARDING_KEY = 'aba-tracker-onboarding-completed';
 
@@ -26,6 +30,8 @@ export default function Dashboard() {
   const [reinforcers, setReinforcers] = useState<Reinforcer[]>([]);
   const [loading, setLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [geminiApiKey, setGeminiApiKey] = useState('');
 
   useEffect(() => {
     loadData();
@@ -79,6 +85,22 @@ export default function Dashboard() {
 
   const handleShowOnboarding = () => {
     setShowOnboarding(true);
+  };
+
+  const handleOpenChat = () => {
+    if (!geminiApiKey) {
+      const key = prompt(
+        t('language.switch') === 'Switch Language'
+          ? 'Enter your Gemini API key to start the AI assistant:'
+          : 'Ingresa tu API key de Gemini para iniciar el asistente de IA:'
+      );
+      if (key) {
+        setGeminiApiKey(key);
+        setShowChat(true);
+      }
+    } else {
+      setShowChat(true);
+    }
   };
 
   if (loading) {
@@ -216,7 +238,7 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             href="/behaviors/new"
             className="p-6 bg-primary-600 hover:bg-primary-700 text-white rounded-lg shadow transition-colors"
@@ -226,6 +248,24 @@ export default function Dashboard() {
               Record a new behavior incident
             </p>
           </Link>
+          <button
+            onClick={handleOpenChat}
+            className="p-6 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg shadow transition-all text-left"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <MessageCircle className="w-5 h-5" />
+              <h3 className="font-semibold">
+                {t('language.switch') === 'Switch Language'
+                  ? 'AI Assistant'
+                  : 'Asistente de IA'}
+              </h3>
+            </div>
+            <p className="text-sm text-purple-100">
+              {t('language.switch') === 'Switch Language'
+                ? 'Ask questions about your child'
+                : 'Haz preguntas sobre tu hijo/a'}
+            </p>
+          </button>
           <Link
             href="/analytics"
             className="p-6 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow transition-colors border border-gray-200 dark:border-gray-700"
@@ -267,6 +307,15 @@ export default function Dashboard() {
         <Onboarding
           onComplete={handleCompleteOnboarding}
           onSkip={handleSkipOnboarding}
+        />
+      )}
+
+      {/* Contextual Chat Modal */}
+      {showChat && (
+        <ContextualChat
+          apiKey={geminiApiKey}
+          behaviors={behaviors}
+          onClose={() => setShowChat(false)}
         />
       )}
     </Layout>
