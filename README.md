@@ -47,6 +47,15 @@ A comprehensive Applied Behavior Analysis (ABA) behavior tracking and management
   - Crisis protocol generation
   - ABA methodology-based insights
 
+- **Multimodal Real-time Input (NEW!)**
+  - **Voice Conversation Mode**: Natural voice-based behavior entry through AI-guided conversation
+  - **Video Streaming Analysis**: Real-time video processing with automatic behavior detection
+  - **Interruptible Conversations**: Natural dialog flow with ability to interrupt AI responses
+  - **Automatic Data Extraction**: AI extracts ABC data from conversations and auto-fills forms
+  - **Emotion & Movement Detection**: Video analysis identifies facial expressions, emotions, and behavioral intensity
+  - **Bilingual Voice Support**: Full conversational support in English and Spanish
+  - **Privacy-First Design**: API keys per session, no permanent storage
+
 ### Technical Features
 - **Progressive Web App (PWA)**
   - Offline functionality with IndexedDB storage
@@ -123,6 +132,60 @@ The app supports AI-powered analysis using Google Gemini:
    - Analytics page → AI-Powered Analysis
 
 **Note:** The API key is stored in-memory only and never persisted. You'll need to enter it each session.
+
+## 🎙️ Using Multimodal Input Features
+
+### Voice Conversation Mode
+1. Navigate to **Behaviors → New Behavior Entry**
+2. Click on **"Voice Conversation"** button
+3. Enter your Gemini API key when prompted
+4. Click **"Start Recording"** to begin
+5. Speak naturally about the behavior incident
+6. The AI will ask follow-up questions to gather ABC data
+7. You can interrupt the AI at any time to correct or add information
+8. Click **"Stop Recording"** when finished
+9. Review the auto-filled form and save
+
+**Tips:**
+- Speak clearly and naturally
+- You can switch between typing and speaking at any time
+- The AI understands context from previous messages
+- Pause/resume recording as needed
+
+### Voice + Video Analysis Mode
+1. Navigate to **Behaviors → New Behavior Entry**
+2. Click on **"Voice + Video Analysis"** button
+3. Enter your Gemini API key when prompted
+4. Grant camera and microphone permissions
+5. Position the camera to show the individual
+6. Click **"Start Recording"**
+7. Speak about the incident while the video captures behavior
+8. The AI analyzes both your voice and the video in real-time
+9. Video analysis detects:
+   - Observable behaviors and movements
+   - Facial expressions and emotions
+   - Intensity levels
+   - Behavioral patterns
+10. All insights are integrated into the conversation and form
+
+**Tips:**
+- Ensure good lighting for better video analysis
+- Use the environment-facing camera (back camera) to record the individual
+- Switch cameras using the camera button if needed
+- Video analysis updates every 2 seconds
+- Toggle the analysis overlay on/off with the eye icon
+
+### Conversation Controls
+- **Pause/Resume**: Pause recording temporarily without ending the session
+- **Interrupt**: Stop AI's current response to provide immediate input
+- **Speaker Toggle**: Mute/unmute AI voice responses
+- **Text Input**: Type messages alongside or instead of voice input
+
+**Privacy Notes:**
+- All processing happens in real-time
+- Video frames are analyzed and discarded (not stored)
+- Only extracted ABC data is saved to your local database
+- Camera and microphone access is only active during recording
 
 ## 🏗️ Technology Stack
 
