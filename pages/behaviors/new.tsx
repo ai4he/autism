@@ -6,9 +6,15 @@ import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { db, STORES } from '@/lib/db';
 import { BehaviorEntry, SeverityLevel, BehaviorFunction } from '@/types';
-import { ArrowLeft, Save, Sparkles } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles, Mic, Video } from 'lucide-react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { generateInterventionStrategies, initializeGemini } from '@/lib/gemini';
+
+const MultimodalConversation = dynamic(
+  () => import('@/components/MultimodalConversation'),
+  { ssr: false }
+);
 
 export default function NewBehavior() {
   const { t } = useTranslation('common');
@@ -17,6 +23,8 @@ export default function NewBehavior() {
   const [analyzingAI, setAnalyzingAI] = useState(false);
   const [aiStrategies, setAiStrategies] = useState<string[]>([]);
   const [geminiApiKey, setGeminiApiKey] = useState('');
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -80,6 +88,28 @@ export default function NewBehavior() {
     }
   };
 
+  const handleBehaviorExtracted = (behavior: Partial<BehaviorEntry>) => {
+    // Fill form with extracted data from conversation
+    setFormData((prev) => ({
+      ...prev,
+      date: behavior.date || prev.date,
+      time: behavior.time || prev.time,
+      antecedent: behavior.antecedent || prev.antecedent,
+      behavior: behavior.behavior || prev.behavior,
+      consequence: behavior.consequence || prev.consequence,
+      severity: behavior.severity || prev.severity,
+      function: behavior.function || prev.function,
+      duration: behavior.duration?.toString() || prev.duration,
+      intensity: behavior.intensity?.toString() || prev.intensity,
+      location: behavior.location || prev.location,
+      notes: behavior.notes || prev.notes,
+    }));
+
+    // Close the modal
+    setShowVoiceModal(false);
+    setShowVideoModal(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -129,6 +159,70 @@ export default function NewBehavior() {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Record a new behavior incident using ABC data collection
           </p>
+        </div>
+
+        {/* Multimodal Input Options */}
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg shadow p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-purple-600" />
+            {t('language.switch') === 'Switch Language' ? 'AI-Powered Input Methods' : 'Métodos de Entrada con IA'}
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            {t('language.switch') === 'Switch Language'
+              ? 'Use natural conversation or video streaming to record behavior incidents faster and more accurately.'
+              : 'Usa conversación natural o video en streaming para registrar incidentes de conducta más rápido y con mayor precisión.'}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={() => setShowVoiceModal(true)}
+              className="flex items-center justify-center gap-3 p-4 bg-white dark:bg-gray-800 border-2 border-purple-300 dark:border-purple-700 rounded-lg hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-md transition-all"
+            >
+              <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                <Mic className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="text-left">
+                <p className="font-semibold text-gray-900 dark:text-gray-100">
+                  {t('language.switch') === 'Switch Language' ? 'Voice Conversation' : 'Conversación por Voz'}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  {t('language.switch') === 'Switch Language'
+                    ? 'Talk naturally with AI assistant'
+                    : 'Habla naturalmente con asistente IA'}
+                </p>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowVideoModal(true)}
+              className="flex items-center justify-center gap-3 p-4 bg-white dark:bg-gray-800 border-2 border-blue-300 dark:border-blue-700 rounded-lg hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all"
+            >
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <Video className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="text-left">
+                <p className="font-semibold text-gray-900 dark:text-gray-100">
+                  {t('language.switch') === 'Switch Language' ? 'Voice + Video Analysis' : 'Análisis de Voz + Video'}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  {t('language.switch') === 'Switch Language'
+                    ? 'Real-time behavior video analysis'
+                    : 'Análisis de video en tiempo real'}
+                </p>
+              </div>
+            </button>
+          </div>
+
+          <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <p className="text-xs text-yellow-800 dark:text-yellow-400">
+              <strong>{t('language.switch') === 'Switch Language' ? 'Note:' : 'Nota:'}</strong>{' '}
+              {t('language.switch') === 'Switch Language'
+                ? 'You\'ll need to enter your Gemini API key when you start. Data is processed in real-time and auto-fills the form below.'
+                : 'Necesitarás ingresar tu API key de Gemini al iniciar. Los datos se procesan en tiempo real y llenan el formulario automáticamente.'}
+            </p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -401,6 +495,80 @@ export default function NewBehavior() {
             </Link>
           </div>
         </form>
+
+        {/* Multimodal Conversation Modals */}
+        {showVoiceModal && geminiApiKey && (
+          <MultimodalConversation
+            apiKey={geminiApiKey}
+            enableVideo={false}
+            onBehaviorExtracted={handleBehaviorExtracted}
+            onClose={() => setShowVoiceModal(false)}
+          />
+        )}
+
+        {showVideoModal && geminiApiKey && (
+          <MultimodalConversation
+            apiKey={geminiApiKey}
+            enableVideo={true}
+            onBehaviorExtracted={handleBehaviorExtracted}
+            onClose={() => setShowVideoModal(false)}
+          />
+        )}
+
+        {/* API Key Prompt Modal */}
+        {(showVoiceModal || showVideoModal) && !geminiApiKey && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6">
+              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {t('language.switch') === 'Switch Language' ? 'Enter Gemini API Key' : 'Ingrese API Key de Gemini'}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                {t('language.switch') === 'Switch Language'
+                  ? 'You need a Gemini API key to use multimodal features. Get one for free from Google AI Studio.'
+                  : 'Necesitas una API key de Gemini para usar las funciones multimodales. Obtén una gratis desde Google AI Studio.'}
+              </p>
+              <input
+                type="password"
+                value={geminiApiKey}
+                onChange={(e) => setGeminiApiKey(e.target.value)}
+                placeholder="AIza..."
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent mb-4"
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    if (geminiApiKey.trim()) {
+                      // API key entered, modal will now show conversation
+                    }
+                  }}
+                  disabled={!geminiApiKey.trim()}
+                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {t('language.switch') === 'Switch Language' ? 'Continue' : 'Continuar'}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowVoiceModal(false);
+                    setShowVideoModal(false);
+                  }}
+                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  {t('language.switch') === 'Switch Language' ? 'Cancel' : 'Cancelar'}
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                <a
+                  href="https://makersuite.google.com/app/apikey"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-600 hover:underline"
+                >
+                  {t('language.switch') === 'Switch Language' ? 'Get API key from Google AI Studio →' : 'Obtener API key desde Google AI Studio →'}
+                </a>
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );
