@@ -3,6 +3,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
+import Onboarding from '@/components/Onboarding';
 import { db, STORES } from '@/lib/db';
 import { BehaviorEntry, Reinforcer } from '@/types';
 import { calculateBehaviorAnalytics } from '@/lib/analytics';
@@ -13,17 +14,27 @@ import {
   AlertCircle,
   Gift,
   Calendar,
+  HelpCircle,
 } from 'lucide-react';
 import Link from 'next/link';
+
+const ONBOARDING_KEY = 'aba-tracker-onboarding-completed';
 
 export default function Dashboard() {
   const { t } = useTranslation('common');
   const [behaviors, setBehaviors] = useState<BehaviorEntry[]>([]);
   const [reinforcers, setReinforcers] = useState<Reinforcer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     loadData();
+
+    // Check if user has completed onboarding
+    const hasCompletedOnboarding = localStorage.getItem(ONBOARDING_KEY);
+    if (!hasCompletedOnboarding) {
+      setShowOnboarding(true);
+    }
   }, []);
 
   const loadData = async () => {
@@ -55,6 +66,20 @@ export default function Dashboard() {
     weekAgo.setDate(weekAgo.getDate() - 7);
     return new Date(b.date) >= weekAgo;
   });
+
+  const handleCompleteOnboarding = () => {
+    localStorage.setItem(ONBOARDING_KEY, 'true');
+    setShowOnboarding(false);
+  };
+
+  const handleSkipOnboarding = () => {
+    localStorage.setItem(ONBOARDING_KEY, 'true');
+    setShowOnboarding(false);
+  };
+
+  const handleShowOnboarding = () => {
+    setShowOnboarding(true);
+  };
 
   if (loading) {
     return (
@@ -220,7 +245,30 @@ export default function Dashboard() {
             </p>
           </Link>
         </div>
+
+        {/* Help/Tutorial Button */}
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={handleShowOnboarding}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 border-2 border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-400 rounded-lg hover:border-purple-500 dark:hover:border-purple-500 transition-all shadow-sm hover:shadow-md"
+          >
+            <HelpCircle className="w-5 h-5" />
+            <span className="font-medium">
+              {t('language.switch') === 'Switch Language'
+                ? 'View Tutorial & ABA Guide'
+                : 'Ver Tutorial y Guía de ABA'}
+            </span>
+          </button>
+        </div>
       </div>
+
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <Onboarding
+          onComplete={handleCompleteOnboarding}
+          onSkip={handleSkipOnboarding}
+        />
+      )}
     </Layout>
   );
 }
