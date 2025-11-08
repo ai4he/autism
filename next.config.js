@@ -12,6 +12,7 @@ const nextConfig = {
     locales: ['en', 'es'],
     defaultLocale: 'en',
   },
+  turbopack: {},
 };
 
 module.exports = withPWA(nextConfig);

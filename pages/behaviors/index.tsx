@@ -2,12 +2,15 @@ import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import Layout from '@/components/Layout';
 import { db, STORES } from '@/lib/db';
-import { BehaviorEntry, SeverityLevel } from '@/types';
-import { Plus, Search, Filter, Download, Trash2 } from 'lucide-react';
+import { BehaviorEntry, SeverityLevel, BehaviorFunction } from '@/types';
+import { Plus, Search, Filter, Download, Trash2, FileUp } from 'lucide-react';
 import Link from 'next/link';
 import { exportToCSV } from '@/lib/analytics';
+
+const PDFImport = dynamic(() => import('@/components/PDFImport'), { ssr: false });
 
 export default function Behaviors() {
   const { t } = useTranslation('common');
@@ -16,6 +19,8 @@ export default function Behaviors() {
   const [searchTerm, setSearchTerm] = useState('');
   const [severityFilter, setSeverityFilter] = useState<SeverityLevel | 'all'>('all');
   const [loading, setLoading] = useState(true);
+  const [showPDFImport, setShowPDFImport] = useState(false);
+  const [geminiApiKey, setGeminiApiKey] = useState('');
 
   useEffect(() => {
     loadBehaviors();
@@ -82,6 +87,57 @@ export default function Behaviors() {
     a.click();
   };
 
+  const handleImportPDF = () => {
+    if (!geminiApiKey) {
+      const key = prompt(
+        t('language.switch') === 'Switch Language'
+          ? 'Enter your Gemini API key to import PDFs:'
+          : 'Ingresa tu API key de Gemini para importar PDFs:'
+      );
+      if (key) {
+        setGeminiApiKey(key);
+        setShowPDFImport(true);
+      }
+    } else {
+      setShowPDFImport(true);
+    }
+  };
+
+  const handleBehaviorsExtracted = async (extractedBehaviors: Partial<BehaviorEntry>[]) => {
+    try {
+      // Save all extracted behaviors
+      for (const behavior of extractedBehaviors) {
+        const entry: BehaviorEntry = {
+          id: `behavior-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          date: behavior.date || new Date().toISOString().split('T')[0],
+          time: behavior.time || new Date().toTimeString().slice(0, 5),
+          antecedent: behavior.antecedent || '',
+          behavior: behavior.behavior || '',
+          consequence: behavior.consequence || '',
+          severity: behavior.severity || 2,
+          function: behavior.function || BehaviorFunction.ESCAPE,
+          duration: behavior.duration,
+          intensity: behavior.intensity,
+          location: behavior.location,
+          notes: behavior.notes,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        await db.add(STORES.BEHAVIORS, entry);
+      }
+
+      // Reload behaviors
+      await loadBehaviors();
+
+      // Close modal
+      setShowPDFImport(false);
+    } catch (error) {
+      console.error('Error saving imported behaviors:', error);
+      alert('Error saving imported behaviors');
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -108,6 +164,13 @@ export default function Behaviors() {
             </p>
           </div>
           <div className="flex gap-2">
+            <button
+              onClick={handleImportPDF}
+              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+              <FileUp className="w-4 h-4" />
+              <span className="hidden sm:inline">Import PDF</span>
+            </button>
             <button
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -259,6 +322,15 @@ export default function Behaviors() {
           )}
         </div>
       </div>
+
+      {/* PDF Import Modal */}
+      {showPDFImport && (
+        <PDFImport
+          apiKey={geminiApiKey}
+          onBehaviorsExtracted={handleBehaviorsExtracted}
+          onClose={() => setShowPDFImport(false)}
+        />
+      )}
     </Layout>
   );
 }
