@@ -10,6 +10,7 @@ import {
   BarChart3,
   Globe,
 } from 'lucide-react';
+import UserMenu from './UserMenu';
 
 interface LayoutProps {
   children: ReactNode;
@@ -46,16 +47,19 @@ export default function Layout({ children }: LayoutProps) {
                 {t('app_subtitle')}
               </p>
             </div>
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-              aria-label={t('language.switch')}
-            >
-              <Globe className="w-4 h-4" />
-              <span className="text-sm font-medium">
-                {i18n.language === 'en' ? 'ES' : 'EN'}
-              </span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleLanguage}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                aria-label={t('language.switch')}
+              >
+                <Globe className="w-4 h-4" />
+                <span className="text-sm font-medium">
+                  {i18n.language === 'en' ? 'ES' : 'EN'}
+                </span>
+              </button>
+              <UserMenu />
+            </div>
           </div>
         </div>
       </header>

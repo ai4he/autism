@@ -13,6 +13,12 @@
     "english": "Inglés",
     "spanish": "Español"
   },
+  "auth": {
+    "sign_in": "Iniciar Sesión",
+    "sign_out": "Cerrar Sesión",
+    "sign_in_with_google": "Iniciar sesión con Google",
+    "signed_in_as": "Sesión iniciada como"
+  },
   "behavior": {
     "title": "Registro de Conductas",
     "new": "Nueva Entrada de Conducta",

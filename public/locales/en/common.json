@@ -13,6 +13,12 @@
     "english": "English",
     "spanish": "Spanish"
   },
+  "auth": {
+    "sign_in": "Sign In",
+    "sign_out": "Sign Out",
+    "sign_in_with_google": "Sign in with Google",
+    "signed_in_as": "Signed in as"
+  },
   "behavior": {
     "title": "Behavior Tracking",
     "new": "New Behavior Entry",
