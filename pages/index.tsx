@@ -117,9 +117,17 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Welcome Header */}
+        <div className="mb-2">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Overview of behavior tracking and insights
+          </p>
+        </div>
+
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             icon={Activity}
             title={t('nav.behaviors')}
@@ -156,25 +164,25 @@ export default function Dashboard() {
 
         {/* Recent Milestones */}
         {analytics.milestones.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-green-600" />
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-medium border border-gray-200 dark:border-gray-700 p-6">
+            <h2 className="text-xl font-bold mb-5 flex items-center gap-2 text-gray-900 dark:text-white">
+              <TrendingUp className="w-6 h-6 text-success-600" />
               {t('analytics.milestones')}
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {analytics.milestones.slice(0, 3).map((milestone) => (
                 <div
                   key={milestone.id}
-                  className={`p-4 rounded-lg border-l-4 ${
+                  className={`p-5 rounded-xl border-l-4 ${
                     milestone.type === 'improvement'
-                      ? 'bg-green-50 dark:bg-green-900/20 border-green-500'
-                      : 'bg-orange-50 dark:bg-orange-900/20 border-orange-500'
+                      ? 'bg-success-50 dark:bg-success-900/20 border-success-500'
+                      : 'bg-warning-50 dark:bg-warning-900/20 border-warning-500'
                   }`}
                 >
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                     {milestone.description}
                   </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5 font-medium">
                     {new Date(milestone.date).toLocaleDateString()}
                   </p>
                 </div>
@@ -184,49 +192,55 @@ export default function Dashboard() {
         )}
 
         {/* Recent Behaviors */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold">Recent Behaviors</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-medium border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex justify-between items-center mb-5">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Recent Behaviors</h2>
             <Link
               href="/behaviors"
-              className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+              className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-semibold transition-colors flex items-center gap-1"
             >
               View All →
             </Link>
           </div>
           {recentBehaviors.length === 0 ? (
-            <p className="text-gray-600 dark:text-gray-400 text-center py-8">
-              No behaviors recorded yet
-            </p>
+            <div className="text-center py-12 px-4">
+              <Activity className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+              <p className="text-gray-600 dark:text-gray-400 font-medium">
+                No behaviors recorded yet
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                Start tracking by creating your first behavior entry
+              </p>
+            </div>
           ) : (
             <div className="space-y-3">
               {recentBehaviors.map((behavior) => (
                 <div
                   key={behavior.id}
-                  className="p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="p-5 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700 hover:bg-slate-50 dark:hover:bg-gray-700/50 transition-all"
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900 dark:text-gray-100">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">
                         {behavior.behavior}
                       </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1.5 line-clamp-2">
                         {behavior.antecedent}
                       </p>
                     </div>
                     <span
-                      className={`px-2 py-1 rounded text-xs font-medium ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap ${
                         behavior.severity >= 4
-                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                          ? 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400'
                           : behavior.severity >= 3
-                          ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
-                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                          ? 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400'
+                          : 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400'
                       }`}
                     >
                       {t(`behavior.severity_${behavior.severity}`)}
                     </span>
                   </div>
-                  <div className="flex gap-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <div className="flex gap-4 mt-3 text-xs text-gray-500 dark:text-gray-400 font-medium">
                     <span>{new Date(behavior.date).toLocaleDateString()}</span>
                     <span>{behavior.time}</span>
                     <span className="capitalize">{behavior.function}</span>
@@ -238,29 +252,32 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           <Link
             href="/behaviors/new"
-            className="p-6 bg-primary-600 hover:bg-primary-700 text-white rounded-lg shadow transition-colors"
+            className="group p-6 bg-gradient-to-br from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-xl shadow-medium hover:shadow-strong transition-all"
           >
-            <h3 className="font-semibold mb-2">{t('behavior.new')}</h3>
-            <p className="text-sm text-primary-100">
+            <div className="flex items-center gap-2 mb-3">
+              <Activity className="w-5 h-5" />
+              <h3 className="font-bold text-lg">{t('behavior.new')}</h3>
+            </div>
+            <p className="text-sm text-primary-100 leading-relaxed">
               Record a new behavior incident
             </p>
           </Link>
           <button
             onClick={handleOpenChat}
-            className="p-6 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg shadow transition-all text-left"
+            className="group p-6 bg-gradient-to-br from-accent-600 to-accent-700 hover:from-accent-700 hover:to-accent-800 text-white rounded-xl shadow-medium hover:shadow-strong transition-all text-left"
           >
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-3">
               <MessageCircle className="w-5 h-5" />
-              <h3 className="font-semibold">
+              <h3 className="font-bold text-lg">
                 {t('language.switch') === 'Switch Language'
                   ? 'AI Assistant'
                   : 'Asistente de IA'}
               </h3>
             </div>
-            <p className="text-sm text-purple-100">
+            <p className="text-sm text-accent-100 leading-relaxed">
               {t('language.switch') === 'Switch Language'
                 ? 'Ask questions about your child'
                 : 'Haz preguntas sobre tu hijo/a'}
@@ -268,32 +285,38 @@ export default function Dashboard() {
           </button>
           <Link
             href="/analytics"
-            className="p-6 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow transition-colors border border-gray-200 dark:border-gray-700"
+            className="group p-6 bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-xl shadow-medium hover:shadow-strong transition-all border border-gray-200 dark:border-gray-700"
           >
-            <h3 className="font-semibold mb-2">{t('nav.analytics')}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="w-5 h-5 text-success-600" />
+              <h3 className="font-bold text-lg text-gray-900 dark:text-white">{t('nav.analytics')}</h3>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
               View trends and insights
             </p>
           </Link>
           <Link
             href="/crisis"
-            className="p-6 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg shadow transition-colors border border-gray-200 dark:border-gray-700"
+            className="group p-6 bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-xl shadow-medium hover:shadow-strong transition-all border border-gray-200 dark:border-gray-700"
           >
-            <h3 className="font-semibold mb-2">{t('crisis.title')}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertCircle className="w-5 h-5 text-danger-600" />
+              <h3 className="font-bold text-lg text-gray-900 dark:text-white">{t('crisis.title')}</h3>
+            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
               Manage crisis protocols
             </p>
           </Link>
         </div>
 
         {/* Help/Tutorial Button */}
-        <div className="mt-6 flex justify-center">
+        <div className="mt-4 flex justify-center">
           <button
             onClick={handleShowOnboarding}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 border-2 border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-400 rounded-lg hover:border-purple-500 dark:hover:border-purple-500 transition-all shadow-sm hover:shadow-md"
+            className="flex items-center gap-2.5 px-6 py-3.5 bg-gradient-to-r from-accent-50 to-primary-50 dark:from-accent-900/20 dark:to-primary-900/20 border-2 border-accent-200 dark:border-accent-800 text-accent-700 dark:text-accent-400 rounded-xl hover:border-accent-400 dark:hover:border-accent-600 transition-all shadow-soft hover:shadow-medium"
           >
             <HelpCircle className="w-5 h-5" />
-            <span className="font-medium">
+            <span className="font-semibold">
               {t('language.switch') === 'Switch Language'
                 ? 'View Tutorial & ABA Guide'
                 : 'Ver Tutorial y Guía de ABA'}
@@ -336,31 +359,33 @@ function StatCard({
   trend?: 'up' | 'down' | 'neutral';
 }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-            <Icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
-          </div>
-          <div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {value}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {subtitle}
-            </p>
-          </div>
+    <div className="group bg-white dark:bg-gray-800 rounded-xl shadow-medium hover:shadow-strong border border-gray-200 dark:border-gray-700 p-6 transition-all">
+      <div className="flex items-start justify-between mb-4">
+        <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-xl group-hover:scale-110 transition-transform">
+          <Icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
         </div>
         {trend && trend !== 'neutral' && (
-          <div>
+          <div className={`p-2 rounded-lg ${
+            trend === 'down'
+              ? 'bg-success-100 dark:bg-success-900/30'
+              : 'bg-danger-100 dark:bg-danger-900/30'
+          }`}>
             {trend === 'down' ? (
-              <TrendingDown className="w-5 h-5 text-green-600" />
+              <TrendingDown className="w-5 h-5 text-success-600 dark:text-success-400" />
             ) : (
-              <TrendingUp className="w-5 h-5 text-red-600" />
+              <TrendingUp className="w-5 h-5 text-danger-600 dark:text-danger-400" />
             )}
           </div>
         )}
+      </div>
+      <div>
+        <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">{title}</p>
+        <p className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">
+          {value}
+        </p>
+        <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+          {subtitle}
+        </p>
       </div>
     </div>
   );

@@ -34,27 +34,27 @@ export default function Layout({ children }: LayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 shadow-soft">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex justify-between items-center py-5">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-primary-600 dark:text-primary-400">
+              <h1 className="text-2xl sm:text-3xl font-bold text-primary-600 dark:text-primary-400 tracking-tight">
                 {t('app_title')}
               </h1>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-0.5 font-medium">
                 {t('app_subtitle')}
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <button
                 onClick={toggleLanguage}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-100 dark:bg-gray-700 hover:bg-slate-200 dark:hover:bg-gray-600 transition-all hover:shadow-soft border border-transparent hover:border-slate-300 dark:hover:border-gray-600"
                 aria-label={t('language.switch')}
               >
                 <Globe className="w-4 h-4" />
-                <span className="text-sm font-medium">
+                <span className="text-sm font-semibold">
                   {i18n.language === 'en' ? 'ES' : 'EN'}
                 </span>
               </button>
@@ -65,8 +65,8 @@ export default function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Mobile Navigation */}
-      <nav className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 fixed bottom-0 left-0 right-0 z-50">
-        <div className="flex justify-around items-center py-2">
+      <nav className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 fixed bottom-0 left-0 right-0 z-50 shadow-strong">
+        <div className="flex justify-around items-center py-2 px-2">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = router.pathname === item.href;
@@ -74,14 +74,14 @@ export default function Layout({ children }: LayoutProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors ${
+                className={`flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl transition-all ${
                   isActive
-                    ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400'
+                    ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 shadow-soft'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-slate-100 dark:hover:bg-gray-700'
                 }`}
               >
                 <Icon className="w-5 h-5" />
-                <span className="text-xs font-medium">{item.label}</span>
+                <span className="text-xs font-semibold">{item.label}</span>
               </Link>
             );
           })}
@@ -91,7 +91,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Desktop Navigation */}
       <nav className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-4 py-3">
+          <div className="flex gap-2 py-4">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = router.pathname === item.href;
@@ -99,14 +99,14 @@ export default function Layout({ children }: LayoutProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl transition-all ${
                     isActive
-                      ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 font-medium'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      ? 'text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 font-semibold shadow-soft'
+                      : 'text-gray-700 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-slate-100 dark:hover:bg-gray-700 font-medium'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
-                  <span>{item.label}</span>
+                  <span className="text-sm">{item.label}</span>
                 </Link>
               );
             })}
@@ -115,7 +115,7 @@ export default function Layout({ children }: LayoutProps) {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20 md:pb-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
         {children}
       </main>
     </div>
