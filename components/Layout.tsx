@@ -11,6 +11,7 @@ import {
   Globe,
 } from 'lucide-react';
 import UserMenu from './UserMenu';
+import ProfileSwitcher from './ProfileSwitcher';
 
 interface LayoutProps {
   children: ReactNode;
@@ -58,6 +59,7 @@ export default function Layout({ children }: LayoutProps) {
                   {i18n.language === 'en' ? 'ES' : 'EN'}
                 </span>
               </button>
+              <ProfileSwitcher />
               <UserMenu />
             </div>
           </div>

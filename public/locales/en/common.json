@@ -109,6 +109,33 @@
     "filter": "Filter",
     "export": "Export Data",
     "settings": "Settings",
-    "help": "Help"
+    "help": "Help",
+    "error": "An error occurred",
+    "optional": "optional"
+  },
+  "profile": {
+    "manage_accounts": "Manage Accounts",
+    "manage_accounts_desc": "Add and manage accounts for parents, therapists, and caregivers",
+    "add_account": "Add Account",
+    "add_new": "Add New Account",
+    "name": "Name",
+    "name_placeholder": "e.g., Dr. Smith, Maria (Therapist)",
+    "name_required": "Name is required",
+    "type": "Account Type",
+    "type_parent": "Parent/Guardian",
+    "type_therapist": "Therapist/BCBA",
+    "type_caregiver": "Caregiver",
+    "email": "Email",
+    "email_placeholder": "email@example.com",
+    "active": "Active",
+    "cannot_delete_last": "Cannot delete the last account. At least one account must remain.",
+    "confirm_delete": "Are you sure you want to remove this account? This cannot be undone.",
+    "data_management": "Data Management",
+    "export_backup": "Export Backup",
+    "import_backup": "Import Backup",
+    "backup_warning": "Export your data regularly to prevent data loss. Import allows you to restore or share data with other devices.",
+    "confirm_import": "This will import data from the backup file. Existing data will be merged with imported data. Continue?",
+    "import_success": "Data imported successfully!",
+    "import_error": "Error importing data. Please check the file format."
   }
 }

@@ -1,7 +1,7 @@
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { db, STORES } from '@/lib/db';
@@ -10,6 +10,7 @@ import { ArrowLeft, Save, Sparkles, Mic, Video } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { generateInterventionStrategies, initializeGemini } from '@/lib/gemini';
+import { getActiveProfileId } from '@/lib/profiles';
 
 const MultimodalConversation = dynamic(
   () => import('@/components/MultimodalConversation'),
@@ -115,6 +116,8 @@ export default function NewBehavior() {
     setSaving(true);
 
     try {
+      const activeProfileId = getActiveProfileId();
+
       const entry: BehaviorEntry = {
         id: `behavior-${Date.now()}`,
         date: formData.date,
@@ -128,6 +131,7 @@ export default function NewBehavior() {
         intensity: formData.intensity ? parseInt(formData.intensity) : undefined,
         location: formData.location || undefined,
         notes: formData.notes || undefined,
+        createdBy: activeProfileId || undefined,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };

@@ -1,13 +1,14 @@
 // IndexedDB wrapper for PWA offline storage
-import { BehaviorEntry, Reinforcer, CrisisProtocol } from '@/types';
+import { BehaviorEntry, Reinforcer, CrisisProtocol, Profile } from '@/types';
 
 const DB_NAME = 'ABATrackerDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // Incremented to add profiles store
 
 export const STORES = {
   BEHAVIORS: 'behaviors',
   REINFORCERS: 'reinforcers',
   CRISIS_PROTOCOLS: 'crisisProtocols',
+  PROFILES: 'profiles',
 } as const;
 
 class Database {
@@ -27,6 +28,7 @@ class Database {
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
+        const oldVersion = event.oldVersion;
 
         // Create Behaviors store
         if (!db.objectStoreNames.contains(STORES.BEHAVIORS)) {
@@ -36,6 +38,15 @@ class Database {
           behaviorStore.createIndex('date', 'date', { unique: false });
           behaviorStore.createIndex('severity', 'severity', { unique: false });
           behaviorStore.createIndex('function', 'function', { unique: false });
+        }
+
+        // Add createdBy index for existing behaviors store (v2 upgrade)
+        if (oldVersion < 2 && db.objectStoreNames.contains(STORES.BEHAVIORS)) {
+          const transaction = (event.target as IDBOpenDBRequest).transaction;
+          const behaviorStore = transaction?.objectStore(STORES.BEHAVIORS);
+          if (behaviorStore && !behaviorStore.indexNames.contains('createdBy')) {
+            behaviorStore.createIndex('createdBy', 'createdBy', { unique: false });
+          }
         }
 
         // Create Reinforcers store
@@ -53,6 +64,15 @@ class Database {
             keyPath: 'id',
           });
           crisisStore.createIndex('isActive', 'isActive', { unique: false });
+        }
+
+        // Create Profiles store (v2)
+        if (!db.objectStoreNames.contains(STORES.PROFILES)) {
+          const profileStore = db.createObjectStore(STORES.PROFILES, {
+            keyPath: 'id',
+          });
+          profileStore.createIndex('isActive', 'isActive', { unique: false });
+          profileStore.createIndex('type', 'type', { unique: false });
         }
       };
     });

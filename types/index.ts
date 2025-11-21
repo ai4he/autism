@@ -28,6 +28,7 @@ export interface BehaviorEntry {
   intensity?: number; // 1-10 scale
   location?: string;
   notes?: string;
+  createdBy?: string; // Profile ID of creator
   createdAt: string;
   updatedAt: string;
 }
@@ -109,4 +110,21 @@ export interface AIAnalysis {
   patterns: string[];
   riskLevel: 'low' | 'medium' | 'high';
   timestamp: string;
+}
+
+export enum ProfileType {
+  PARENT = 'parent',
+  THERAPIST = 'therapist',
+  CAREGIVER = 'caregiver',
+}
+
+export interface Profile {
+  id: string;
+  name: string;
+  type: ProfileType;
+  email?: string;
+  color: string; // Hex color for avatar/identification
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

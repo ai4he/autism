@@ -109,6 +109,33 @@
     "filter": "Filtrar",
     "export": "Exportar Datos",
     "settings": "Configuración",
-    "help": "Ayuda"
+    "help": "Ayuda",
+    "error": "Ocurrió un error",
+    "optional": "opcional"
+  },
+  "profile": {
+    "manage_accounts": "Gestionar Cuentas",
+    "manage_accounts_desc": "Agregar y gestionar cuentas para padres, terapeutas y cuidadores",
+    "add_account": "Agregar Cuenta",
+    "add_new": "Agregar Nueva Cuenta",
+    "name": "Nombre",
+    "name_placeholder": "ej., Dra. García, María (Terapeuta)",
+    "name_required": "El nombre es requerido",
+    "type": "Tipo de Cuenta",
+    "type_parent": "Padre/Tutor",
+    "type_therapist": "Terapeuta/BCBA",
+    "type_caregiver": "Cuidador",
+    "email": "Correo Electrónico",
+    "email_placeholder": "correo@ejemplo.com",
+    "active": "Activo",
+    "cannot_delete_last": "No se puede eliminar la última cuenta. Debe quedar al menos una cuenta.",
+    "confirm_delete": "¿Está seguro que desea eliminar esta cuenta? Esta acción no se puede deshacer.",
+    "data_management": "Gestión de Datos",
+    "export_backup": "Exportar Respaldo",
+    "import_backup": "Importar Respaldo",
+    "backup_warning": "Exporte sus datos regularmente para prevenir pérdida de datos. Importar le permite restaurar o compartir datos con otros dispositivos.",
+    "confirm_import": "Esto importará datos del archivo de respaldo. Los datos existentes se combinarán con los datos importados. ¿Continuar?",
+    "import_success": "¡Datos importados exitosamente!",
+    "import_error": "Error al importar datos. Por favor verifique el formato del archivo."
   }
 }
